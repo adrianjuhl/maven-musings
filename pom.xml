@@ -27,6 +27,7 @@
   <properties>
     <revision>0-SNAPSHOT</revision>
     <exec-maven-plugin-version>1.6.0</exec-maven-plugin-version>
+    <resolve-parent-version-maven-plugin-version>0.7</resolve-parent-version-maven-plugin-version>
   </properties>
 
   <build>
@@ -37,8 +38,33 @@
           <artifactId>exec-maven-plugin</artifactId>
           <version>${exec-maven-plugin-version}</version>
         </plugin>
+        <plugin>
+          <groupId>com.hbakkum.maven.plugins</groupId>
+          <artifactId>resolve-parent-version-maven-plugin</artifactId>
+          <version>${resolve-parent-version-maven-plugin-version}</version>
+        </plugin>
       </plugins>
     </pluginManagement>
+    <plugins>
+      <plugin>
+        <!--
+          This plugin resolves the values of the project.version and project.parent.version
+          elements (interpolating any property placeholders that these elements may contain)
+          so that the installed/deployed pom.xml file will contain the resolved values.
+          see https://github.com/hbakkum/resolve-parent-version-maven-plugin
+          see http://blog.kiwitype.com/2017/maven-versioning-in-a-continuous-delivery-pipeline/
+        -->
+        <groupId>com.hbakkum.maven.plugins</groupId>
+        <artifactId>resolve-parent-version-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>resolve-parent-version</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
 
   <profiles>
