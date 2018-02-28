@@ -205,6 +205,76 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>reset-project-version-to-default</id>
+      <!--
+        Replaces the value of the project's version element with: MAJOR.MINOR.${revision}
+        The project.version element must already be in the format: MAJOR.MONOR.*
+        The process includes these 3 steps (variable names have been altered slightly):
+        1. execute build-helper-maven-plugin:parse-version to get the project's MAJOR and MINOR versions
+        2. execute versions-maven-plugin:set to set the project's version element as ${MAJOR}.${MINOR}.${replace-with-revision}
+        3. execute exec-maven-plugin:exec to run sed to replace 'replace-with-revision' with 'revision'
+        In step 2, the name of the temporary variable (that gets replaced in step 3) is chosen as a variable name that isn't a defined project property, so that variable interpolation doesn't occur.
+        In step 3, the versions-maven-plugin:set plugin goal can't be used as variable interpolation occurs as 'revision' is a defined project property.
+      -->
+      <build>
+        <defaultGoal>initialize</defaultGoal>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <version>3.0.0</version>
+            <executions>
+              <execution>
+                <id>reset-project-version-to-default-parse-version</id>
+                <phase>validate</phase>
+                <goals>
+                  <goal>parse-version</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>versions-maven-plugin</artifactId>
+            <version>2.5</version>
+            <executions>
+              <execution>
+                <id>reset-project-version-to-default-set-version</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>set</goal>
+                </goals>
+                <configuration>
+                  <newVersion>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${reset-project-version-to-default-revision}</newVersion>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>reset-project-version-to-default-exec-sed</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <executable>sed</executable>
+                  <arguments>
+                    <argument>-i</argument>
+                    <argument>'0,/^.*\x3Cversion>.*\x3C\/version>.*$/s/reset-project-version-to-default-revision/revision/'</argument>
+                    <argument>pom.xml</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 
 </project>
