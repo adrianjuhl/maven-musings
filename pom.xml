@@ -112,6 +112,99 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>run-mvn-in-mvn</id>
+      <!--
+        A way to run "mvn" inside mvn. Warning: the versions:set examples will modify the pom.
+        mvn exec:exec -Dexec.executable='sh' -Dexec.args="-c 'mvn -v'"
+        mvn exec:exec -Dexec.executable='sh' -Dexec.args="-c 'mvn -q -Pecho-element-values'"
+        mvn exec:exec -Dexec.executable='sh' -Dexec.args="-c 'mvn versions:set -DnewVersion=1.2.3'"
+        mvn exec:exec -Dexec.executable='sh' -Dexec.args="-c 'mvn versions:set -DnewVersion=$(mvn -q -Pecho-element-values -Drevision='12345' -Decho-element-values-arg='${project.version}')'"
+
+        Example commands using this profile with its executions. Warning: the versions:set examples will modify the pom.
+        mvn -Prun-mvn-in-mvn -Drun-mvn-in-mvn-print-maven-version-execution-skip=false
+        mvn -Prun-mvn-in-mvn -Drun-mvn-in-mvn-echo-project-version-execution-skip=false
+        mvn -Prun-mvn-in-mvn -Drun-mvn-in-mvn-set-project-version-123-execution-skip=false
+        mvn -Prun-mvn-in-mvn -Drun-mvn-in-mvn-set-project-version-to-interpolated-value-execution-skip=false
+      -->
+      <properties>
+        <run-mvn-in-mvn-print-maven-version-execution-skip>true</run-mvn-in-mvn-print-maven-version-execution-skip>
+        <run-mvn-in-mvn-echo-project-version-execution-skip>true</run-mvn-in-mvn-echo-project-version-execution-skip>
+        <run-mvn-in-mvn-set-project-version-123-execution-skip>true</run-mvn-in-mvn-set-project-version-123-execution-skip>
+        <run-mvn-in-mvn-set-project-version-to-interpolated-value-execution-skip>true</run-mvn-in-mvn-set-project-version-to-interpolated-value-execution-skip>
+      </properties>
+      <build>
+        <defaultGoal>initialize</defaultGoal>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>run-mvn-in-mvn-print-maven-version-execution</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <skip>${run-mvn-in-mvn-print-maven-version-execution-skip}</skip>
+                  <executable>sh</executable>
+                  <arguments>
+                    <argument>-c</argument>
+                    <argument>mvn -v</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+              <execution>
+                <id>run-mvn-in-mvn-echo-project-version-execution</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <skip>${run-mvn-in-mvn-echo-project-version-execution-skip}</skip>
+                  <executable>sh</executable>
+                  <arguments>
+                    <argument>-c</argument>
+                    <argument>mvn -q -Pecho-element-values</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+              <execution>
+                <id>run-mvn-in-mvn-set-project-version-123-execution</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <skip>${run-mvn-in-mvn-set-project-version-123-execution-skip}</skip>
+                  <executable>sh</executable>
+                  <arguments>
+                    <argument>-c</argument>
+                    <argument>mvn versions:set -DnewVersion=1.2.3</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+              <execution>
+                <id>run-mvn-in-mvn-set-project-version-to-interpolated-value-execution</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <skip>${run-mvn-in-mvn-set-project-version-to-interpolated-value-execution-skip}</skip>
+                  <executable>sh</executable>
+                  <arguments>
+                    <argument>-c</argument>
+                    <argument>mvn versions:set -DnewVersion=$(mvn -q -Pecho-element-values -Drevision=12345)</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 
 </project>
