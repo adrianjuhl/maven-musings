@@ -70,21 +70,23 @@
   <profiles>
     <profile>
       <id>echo-element-values</id>
-      <!--
-        Echos interpolated project element value(s).
-
-        The execution uses the property "echo-element-values-arg", interpolating any elements or properties it contains, and echos the result.
-
-        The defaults will echo the value of the project.version element:
-        mvn -q -Pecho-element-values
-
-        Other properties can be set to affect the interpolation:
-        mvn -q -Pecho-element-values -Drevision=4
-
-        The value of echo-element-values-arg can contain static text:
-        mvn -q -Pecho-element-values -Decho-element-values-arg='Project coordinates: ${project.groupId}:${project.artifactId}:${project.version}'
-      -->
       <properties>
+        <description>
+          <![CDATA[
+            Echoes interpolated project element value(s).
+
+            The execution uses the property "echo-element-values-arg", interpolating any elements or properties it contains, and echos the result.
+
+            The defaults will echo the value of the project.version element:
+            mvn --quiet -Pecho-element-values
+
+            Other properties can be set to affect the interpolation:
+            mvn --quiet -Pecho-element-values -Drevision=4
+
+            The value of echo-element-values-arg can contain static text:
+            mvn --quiet -Pecho-element-values -Decho-element-values-arg='Project coordinates: ${project.groupId}:${project.artifactId}:${project.version}'
+          ]]>
+        </description>
         <echo-element-values-arg>${project.version}</echo-element-values-arg>
       </properties>
       <build>
